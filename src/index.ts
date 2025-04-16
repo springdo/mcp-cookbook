@@ -5,7 +5,7 @@ import { z } from "zod";
 import { registerCategoriesResource } from "./resources/categories.js";
 
 // Import tools registrations
-
+import { registerGetRecipesByCategoryTool } from "./tools/getRecipesByCategories.js";
 
 // Create the MCP server
 const server = new McpServer({
@@ -17,7 +17,11 @@ const server = new McpServer({
   }
 });
 
+// resources
 registerCategoriesResource(server);
+
+// tools
+registerGetRecipesByCategoryTool(server);
 
 // Start the server
 async function main() {

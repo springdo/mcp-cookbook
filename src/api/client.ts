@@ -1,22 +1,15 @@
-// API endpoints and configuration constants
-export const API_BASE_URL = "https://production-api.gousto.co.uk/cmsreadbroker/v1";
-export const COOKBOOK_ENDPOINT = `${API_BASE_URL}/cookbook`;
-export const RECIPES_ENDPOINT = `${API_BASE_URL}/recipes`;
-export const RECIPE_ENDPOINT = `${API_BASE_URL}/recipe`;
-
-// Default pagination limits
-export const DEFAULT_RECIPE_LIMIT = 10;
-export const MAX_RECIPE_LIMIT = 50;
-export const DEFAULT_SEARCH_LIMIT = 5;
-export const MAX_SEARCH_LIMIT = 20;
-
 import fetch from "node-fetch";
-
 import { 
   CookbookResponse, 
   RecipesResponse, 
   RecipeDetailResponse 
 } from "./types.js";
+
+import { 
+  COOKBOOK_ENDPOINT, 
+  RECIPES_ENDPOINT, 
+  RECIPE_ENDPOINT 
+} from "../utils/config.js";
 
 // Generic fetch function for API requests
 export async function fetchData<T>(url: string): Promise<T> {
