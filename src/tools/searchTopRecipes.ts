@@ -8,9 +8,9 @@ import { Recipe } from "../api/types.js";
 export function registerSearchTopRecipesTool(server: McpServer): void {
   server.tool(
     "search-top-recipes",
-    "Search for recipes by keyword across the top 900 or more recipes",
+    "Search for recipes by keyword (example chicken, pepper, steak etc) across the top 900 rated or more recipes",
     {
-      keyword: z.string().describe("Search term to find in recipe titles"),
+      keyword: z.string().describe("Search term to find in recipe title, for example pepper"),
       pagination: z.number().min(1).max(MAX_PAGE_LIMIT).default(DEFAULT_PAGE_LIMIT)
         .describe(`Number of requests to make (60 items per response up to 15 pages total) (max ${MAX_PAGE_LIMIT})`),
     },
