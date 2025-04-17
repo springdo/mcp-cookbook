@@ -13,18 +13,13 @@ export function registerSearchTopRecipesTool(server: McpServer): void {
       keyword: z.string().describe("Search term to find in recipe titles"),
       pagination: z.number().min(1).max(MAX_PAGE_LIMIT).default(DEFAULT_PAGE_LIMIT)
         .describe(`Number of requests to make (60 items per response up to 15 pages total) (max ${MAX_PAGE_LIMIT})`),
-      limit: z.number().min(1).max(MAX_SEARCH_LIMIT).default(DEFAULT_SEARCH_LIMIT)
-        .describe(`Number of recipes to return (max ${MAX_SEARCH_LIMIT})`)
     },
-    async ({ keyword, pagination, limit }) => {
+    async ({ keyword, pagination }) => {
       try {
-        console.error(`registerSearchTopRecipesTool :: keyword=${keyword} , pagination=${pagination}, limit=${limit}`)
+        console.error(`registerSearchTopRecipesTool :: keyword=${keyword} , pagination=${pagination}`)
         const category = 'recipes'
-        const searchResults: any[] = [];
-        let totalFound = 0;
-  
+        const searchResults: any[] = [];  
         for (let index = 0; index <= pagination; index++) {
-          if (totalFound >= limit) break;
           try {
             // getRecipesByCategory(category: string, limit: number = 10, offset: number = 0)
             const data = await getRecipesByCategory(category, 60, 60 * index); 
@@ -34,9 +29,8 @@ export function registerSearchTopRecipesTool(server: McpServer): void {
                 recipe.title.toLowerCase().includes(keyword.toLowerCase())
               );
               
-              // Add matching recipes to results, up to the limit
+              // Add matching recipes to results with no limits, up to the limit
               for (const recipe of matchingRecipes) {
-                if (totalFound < limit) {
                   searchResults.push({
                     title: recipe.title,
                     url: recipe.url,
@@ -45,10 +39,6 @@ export function registerSearchTopRecipesTool(server: McpServer): void {
                     rating: recipe.rating ? `${recipe.rating.average}/5 (${recipe.rating.count} ratings)` : "No ratings",
                     image: recipe.media?.images?.[2]?.image || "No image available"
                   });
-                  totalFound++;
-                }
-                
-                if (totalFound >= limit) break;
               }
             }
           } catch (error) {
