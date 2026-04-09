@@ -1,47 +1,54 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { z } from "zod";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import { createMcpExpressApp } from "@modelcontextprotocol/sdk/server/express.js";
+import { Request, Response } from "express";
+
 // Import resources
 import { registerCategoriesResource } from "./resources/categories.js";
 
-// Import tools registrations
+// Import tool registrations
 import { registerGetRecipeDetailsTool } from "./tools/getRecipeDetails.js";
 import { registerGetRecipesByCategoryTool } from "./tools/getRecipesByCategories.js";
 import { registerSearchRecipesTool } from "./tools/searchRecipesByCategory.js";
 import { registerSearchTopRecipesTool } from "./tools/searchTopRecipes.js";
 
-// Create the MCP server
-const server = new McpServer({
-  name: "Gousto Cookbook",
-  version: "1.0.0",
-  capabilities: {
-    resources: {},
-    tools: {}
-  }
-});
+const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
-// resources
-registerCategoriesResource(server);
+function createServer(): McpServer {
+  const server = new McpServer({
+    name: "Gousto Cookbook",
+    version: "1.0.0"
+  });
 
-// tools
-registerGetRecipesByCategoryTool(server);
-registerGetRecipeDetailsTool(server);
-registerSearchRecipesTool(server);
-registerSearchTopRecipesTool(server);
+  registerCategoriesResource(server);
+  registerGetRecipesByCategoryTool(server);
+  registerGetRecipeDetailsTool(server);
+  registerSearchRecipesTool(server);
+  registerSearchTopRecipesTool(server);
 
-// Start the server
-async function main() {
-  try {
-    const transport = new StdioServerTransport();
-    await server.connect(transport);
-    console.error("Gousto Cookbook MCP Server running");
-  } catch (error) {
-    console.error("Error starting server:", error);
-    process.exit(1);
-  }
+  return server;
 }
 
-main().catch(error => {
-  console.error("Fatal error:", error);
-  process.exit(1);
+const app = createMcpExpressApp({ host: "0.0.0.0" });
+
+// POST /mcp — client-to-server messages
+app.post("/mcp", async (req: Request, res: Response) => {
+  const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
+  const server = createServer();
+  res.on("finish", () => server.close());
+  await server.connect(transport);
+  await transport.handleRequest(req, res, req.body);
+});
+
+// GET /mcp — server-to-client SSE stream
+app.get("/mcp", async (req: Request, res: Response) => {
+  const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
+  const server = createServer();
+  res.on("finish", () => server.close());
+  await server.connect(transport);
+  await transport.handleRequest(req, res);
+});
+
+app.listen(PORT, () => {
+  console.log(`Gousto Cookbook MCP Server running on http://localhost:${PORT}/mcp`);
 });
