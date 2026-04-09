@@ -2,10 +2,10 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { getRecipeDetailsBySlug } from "../api/client.js";
 
-// Register the get-recipe-details tool
+// Register the get_recipe_details tool
 export function registerGetRecipeDetailsTool(server: McpServer): void {
   server.tool(
-    "get-recipe-details",
+    "get_recipe_details",
     "Get detailed information about a specific recipe",
     {
       recipeSlug: z.string().describe("Recipe URL slug (e.g. 'sticky-chilli-chicken-breast-with-salt-pepper-chips' or 'chicken-recipes/smoky-spanish-chicken-patatas-bravas-aioli')"),
@@ -13,7 +13,7 @@ export function registerGetRecipeDetailsTool(server: McpServer): void {
     async ({ recipeSlug }) => {
       try {
         // Remove leading slash if present
-        let cleanSlug = recipeSlug.replace(/^\//, '');
+        let cleanSlug = recipeSlug.replace(/^\//, '').split('/')[1];
         
         // Try to get the recipe details
         const data = await getRecipeDetailsBySlug(cleanSlug);

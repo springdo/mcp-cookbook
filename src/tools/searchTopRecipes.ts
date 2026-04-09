@@ -1,7 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { getRecipesByCategory } from "../api/client.js";
-import { MAX_PAGE_LIMIT, DEFAULT_PAGE_LIMIT, MAX_SEARCH_LIMIT, DEFAULT_SEARCH_LIMIT } from "../utils/config.js";
+import { MAX_PAGE_LIMIT, DEFAULT_PAGE_LIMIT } from "../utils/config.js";
 import { Recipe } from "../api/types.js";
 
 // Register the search-recipes tool

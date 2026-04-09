@@ -4,10 +4,10 @@ import { getRecipesByCategory } from "../api/client.js";
 import { DEFAULT_RECIPE_LIMIT, MAX_RECIPE_LIMIT } from "../utils/config.js";
 import { Recipe } from "../api/types.js";
 
-// Register the get-recipes-by-category tool
+// Register the get_recipes_by_category tool
 export function registerGetRecipesByCategoryTool(server: McpServer): void {
   server.tool(
-    "get-recipes-by-category",
+    "get_recipes_by_category",
     "Get a list of recipes from a specific category",
     {
       category: z.string().describe("Category URL slug (e.g. 'healthy-choices', 'chicken-recipes', etc.)"),

@@ -4,10 +4,10 @@ import { getCategories, getRecipesByCategory } from "../api/client.js";
 import { DEFAULT_SEARCH_LIMIT, MAX_SEARCH_LIMIT } from "../utils/config.js";
 import { Recipe } from "../api/types.js";
 
-// Register the search-recipes tool
+// Register the search_recipes tool
 export function registerSearchRecipesTool(server: McpServer): void {
   server.tool(
-    "search-recipes-by-category",
+    "search_recipes_by_category",
     "Search for recipes by keyword across categories",
     {
       keyword: z.string().describe("Search term to find in recipe titles"),
